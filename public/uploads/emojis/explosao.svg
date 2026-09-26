@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <circle cx="64" cy="64" r="52" fill="#ffd166"/>
+  <path d="M20 20 L38 34 M108 20 L90 34" stroke="#333" stroke-width="6" stroke-linecap="round"/>
+  <path d="M20 108 L34 92 M108 108 L94 92" stroke="#333" stroke-width="6" stroke-linecap="round"/>
+  <polygon points="64,34 68,46 80,40 74,50 86,52 72,56 76,66 66,58 58,70 60,58 46,60 56,54 44,48 56,48" fill="#ef476f" stroke="#333" stroke-width="3" stroke-linejoin="round"/>
+  <circle cx="52" cy="62" r="4" fill="#333"/>
+  <circle cx="76" cy="62" r="4" fill="#333"/>
+  <path d="M52 74 Q64 82 76 74" stroke="#333" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <text x="64" y="112" font-size="10" font-family="sans-serif" text-anchor="middle" fill="#333">💥</text>
+</svg>

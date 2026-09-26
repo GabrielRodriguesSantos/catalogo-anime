@@ -1,0 +1,45 @@
+# Render Blueprint — deploy sempre no ar
+#
+# Requisitos:
+#   - Conta no Render conectada ao GitHub (este repositório).
+#   - Plano "Starter" (pago) para o serviço web: o plano gratuito coloca a
+#     instância para dormir, o que deixaria o site "desligado".
+#   - Definir SEED_ADMIN_PASSWORD (senha do admin) ao criar o serviço.
+#
+# Como usar:
+#   1. Suba este repositório para o GitHub (ver instruções no relatório).
+#   2. No Render: New -> Blueprint, aponte para o repositório.
+#   3. Na variável SEED_ADMIN_PASSWORD, informe a senha do administrador.
+#   4. Deploy. O disco persistente (SQLite + uploads) sobrevive a redeploys.
+
+services:
+  - type: web
+    name: catalogo-anime
+    runtime: docker
+    plan: starter
+    region: oregon
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      - key: DATABASE_URL
+        value: file:/var/data/prisma/dev.db
+      - key: UPLOADS_ROOT
+        value: /var/data/uploads
+      - key: SEED_ADMIN_USERNAME
+        value: admin
+      - key: SEED_ADMIN_EMAIL
+        value: admin@example.com
+      - key: SEED_ADMIN_PASSWORD
+        sync: false
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: EMOJIA_API_URL
+        sync: false
+      - key: EMOJIA_API_KEY
+        sync: false
+      - key: DISCOVERY_EXTERNAL_SEARCH
+        value: "0"
+    disk:
+      name: dados
+      mountPath: /var/data
+      sizeGB: 1
