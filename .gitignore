@@ -44,7 +44,13 @@ next-env.d.ts
 # prisma / sqlite
 /prisma/*.db
 /prisma/*.db-journal
+/prisma/*.db-shm
+/prisma/*.db-wal
 /src/generated
+
+# logs de execução
+*.log
+/vigia-amigos.log
 
 # backups
 /backups/

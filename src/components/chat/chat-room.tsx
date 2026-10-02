@@ -169,7 +169,7 @@ export function ChatRoom({
                   <img
                     src={member.avatarUrl}
                     alt={member.username}
-                    className="h-full w-full rounded-full object-cover"
+                    className="avatar-hover h-full w-full rounded-full object-cover"
                   />
                 ) : (
                   (member.displayName || member.username).slice(0, 2).toUpperCase()

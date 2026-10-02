@@ -2,13 +2,16 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import WorkCard from "@/components/work-card";
+import WorkActions from "@/components/work-actions";
 import { findWorkDecoratedById } from "@/lib/catalog";
 import {
   DUBBING_STATUS_LABELS,
   LANGUAGE_LABELS,
   PRICE_MODEL_LABELS,
   REVIEW_KIND_LABELS,
+  WORK_AGE_RATING_LABELS,
+  WORK_STATUS_LABELS,
+  WORK_TYPE_LABELS,
 } from "@/lib/catalog-data";
 import { requireUser } from "@/lib/dal";
 import { prisma } from "@/lib/prisma";
@@ -48,8 +51,96 @@ export default async function WorkDetailPage({
         ← Voltar ao catálogo
       </Link>
 
-      <div className="mt-4 max-w-sm">
-        <WorkCard work={work} />
+      <div className="mt-4 overflow-hidden rounded-2xl border border-black/[.08] dark:border-white/[.145]">
+        <div className="flex flex-col gap-6 p-5 sm:flex-row sm:gap-8 sm:p-7">
+          <div className="w-40 shrink-0 self-start sm:w-56">
+            {work.coverUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={work.coverUrl}
+                alt={`Capa de ${work.title}`}
+                className="w-full rounded-xl border border-black/[.08] shadow-sm dark:border-white/[.145]"
+              />
+            ) : (
+              <div className="flex aspect-[3/4] w-full items-center justify-center rounded-xl bg-zinc-100 p-4 text-center dark:bg-zinc-900">
+                <span className="text-sm font-semibold text-zinc-400">
+                  {WORK_TYPE_LABELS[work.type] ?? work.type}
+                </span>
+              </div>
+            )}
+          </div>
+
+          <div className="flex-1">
+            <div className="flex flex-wrap items-center gap-2 text-xs">
+              <span className="rounded-full bg-zinc-100 px-3 py-1 font-semibold dark:bg-zinc-800">
+                {WORK_TYPE_LABELS[work.type] ?? work.type}
+              </span>
+              {work.year && (
+                <span className="rounded-full bg-zinc-100 px-3 py-1 font-semibold dark:bg-zinc-800">
+                  {work.year}
+                </span>
+              )}
+              <span className="rounded-full bg-zinc-100 px-3 py-1 font-semibold dark:bg-zinc-800">
+                {WORK_STATUS_LABELS[work.status] ?? work.status}
+              </span>
+              <span
+                className={`rounded-full px-3 py-1 font-semibold ${
+                  work.ageRating === "R18"
+                    ? "bg-red-600 text-white"
+                    : "bg-zinc-100 dark:bg-zinc-800"
+                }`}
+                title={
+                  work.ageRating === "R18"
+                    ? "Conteúdo adulto. Visível apenas para contas que confirmam ser maiores de 18 anos."
+                    : WORK_AGE_RATING_LABELS[work.ageRating] ?? work.ageRating
+                }
+              >
+                {WORK_AGE_RATING_LABELS[work.ageRating] ?? work.ageRating}
+                {work.ageRating === "R18" ? "+" : ""}
+              </span>
+            </div>
+
+            <h1 className="mt-3 text-2xl font-extrabold tracking-tight sm:text-3xl">
+              {work.title}
+            </h1>
+            {work.titles.length > 0 && (
+              <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
+                {work.titles.join(" · ")}
+              </p>
+            )}
+
+            <div className="mt-3 flex flex-wrap gap-1.5">
+              {work.genres.map((genre) => (
+                <span
+                  key={genre.value}
+                  className="rounded-full bg-zinc-100 px-2.5 py-0.5 text-xs dark:bg-zinc-800"
+                >
+                  {genre.label}
+                </span>
+              ))}
+            </div>
+
+            {work.synopsis && (
+              <p className="mt-4 text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
+                {work.synopsis}
+              </p>
+            )}
+
+            {work.availability && (
+              <p className="mt-2 text-sm text-zinc-500 dark:text-zinc-400">
+                {work.availability}
+              </p>
+            )}
+
+            <div className="mt-5">
+              <WorkActions
+                workId={work.id}
+                isFavorite={work.isFavorite}
+                libraryStatus={work.libraryStatus}
+              />
+            </div>
+          </div>
+        </div>
       </div>
 
       <section className="mt-8">
@@ -136,6 +227,17 @@ export default async function WorkDetailPage({
                   <p className="mt-2 text-xs text-zinc-500 dark:text-zinc-400">
                     {link.note}
                   </p>
+                )}
+
+                {(link.priceModel === "ADS" || link.priceModel === "VIP") && (
+                  <a
+                    href="https://vt.tiktok.com/ZSb8kKr5a/"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="mt-3 ml-2 inline-block rounded-full border border-accent px-3 py-1.5 text-sm font-medium text-accent transition-colors hover:bg-accent hover:text-white"
+                  >
+                    📺 Tutorial: como assistir sem anúncios/VIP
+                  </a>
                 )}
 
                 <a

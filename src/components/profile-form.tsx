@@ -20,6 +20,7 @@ const labelClass = "text-sm font-medium";
 export type ProfileFormValues = {
   bio: string;
   avatarUrl: string | null;
+  bannerUrl: string | null;
   theme: ThemePreference;
   accent: AccentPreference;
   favoriteCategories: FavoriteCategoryValue[];
@@ -88,6 +89,25 @@ export default function ProfileForm({ initial }: { initial: ProfileFormValues })
           placeholder="Um pouco sobre você"
           className={inputClass}
         />
+      </div>
+
+      <div className="mt-5 flex flex-col gap-1.5">
+        <label htmlFor="banner" className={labelClass}>
+          Fundo animado do perfil
+        </label>
+        <input
+          id="banner"
+          name="banner"
+          type="text"
+          defaultValue={initial.bannerUrl ?? ""}
+          placeholder="https://… (imagem ou vídeo .mp4/.webm)"
+          className={inputClass}
+        />
+        <p className="text-xs text-zinc-500 dark:text-zinc-400">
+          Cole a URL de uma imagem ou de um vídeo (🧾 .mp4/.webm/.gif). No
+          computador ele fica de fundo do seu perfil; no celular, mostramos a
+          primeira cena. Deixe em branco para remover.
+        </p>
       </div>
 
       <div className="mt-5 grid gap-4 sm:grid-cols-2">
@@ -167,7 +187,7 @@ export default function ProfileForm({ initial }: { initial: ProfileFormValues })
         </Link>
         <button
           type="submit"
-          className="h-11 rounded-full bg-foreground px-6 text-sm font-medium text-background transition-opacity hover:opacity-90"
+          className="h-11 rounded-full bg-accent px-6 text-sm font-semibold text-white transition-colors hover:bg-accent-dark"
         >
           Salvar
         </button>

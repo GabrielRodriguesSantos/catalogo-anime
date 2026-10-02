@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 
 import AdultContentToggle from "@/components/adult-content-toggle";
+import AdminAccessToggle from "@/components/admin-access-toggle";
 import ProfileForm from "@/components/profile-form";
 import { getProfileData, requireUser } from "@/lib/dal";
 import { parsePreferences } from "@/lib/preferences";
@@ -25,6 +26,7 @@ export default async function EditProfilePage() {
           initial={{
             bio: profileData.profile?.bio ?? "",
             avatarUrl: profileData.profile?.avatarUrl ?? null,
+            bannerUrl: profileData.profile?.bannerUrl ?? null,
             theme: preferences.theme,
             accent: preferences.accent,
             favoriteCategories: preferences.favoriteCategories,
@@ -33,6 +35,7 @@ export default async function EditProfilePage() {
         <AdultContentToggle
           verified={profileData.profile?.adultVerified === true}
         />
+        <AdminAccessToggle role={user.role} />
       </div>
     </div>
   );

@@ -3,6 +3,7 @@ import Link from "next/link";
 
 import { getUnreadNotificationCount, getProfileData, requireUser } from "@/lib/dal";
 import { formatDate, timeSince } from "@/lib/date";
+import { prisma } from "@/lib/prisma";
 import {
   ACCENT_OPTIONS,
   FAVORITE_CATEGORIES,
@@ -25,6 +26,12 @@ function hexOf(value: string | undefined): string | undefined {
   return ACCENT_OPTIONS.find((option) => option.value === value)?.hex;
 }
 
+const VIDEO_URL_REGEX = /\.(mp4|webm|ogv|mov|m4v)(\?.*)?$/i;
+
+function isVideoUrl(url: string): boolean {
+  return VIDEO_URL_REGEX.test(url);
+}
+
 export default async function ProfilePage() {
   const currentUser = await requireUser();
   const profileData = await getProfileData(currentUser.id);
@@ -36,19 +43,56 @@ export default async function ProfilePage() {
 
   const preferences = parsePreferences(profileData.settings?.data);
   const avatarUrl = profileData.profile?.avatarUrl;
+  const bannerUrl = profileData.profile?.bannerUrl;
   const bio = profileData.profile?.bio;
   const initial = profileData.username.charAt(0).toUpperCase();
 
+  const allSettingsRows = await prisma.userSetting.findMany({
+    select: { data: true },
+  });
+  const categoryCounts = new Map<string, number>();
+  for (const row of allSettingsRows) {
+    for (const category of parsePreferences(row.data).favoriteCategories) {
+      categoryCounts.set(category, (categoryCounts.get(category) ?? 0) + 1);
+    }
+  }
+  const ranking = [...categoryCounts.entries()]
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 5);
+
   return (
     <div className="mx-auto w-full max-w-2xl px-6 py-8">
-      <div className="rounded-2xl border border-black/[.08] p-6 dark:border-white/[.145]">
+      <div className="overflow-hidden rounded-2xl border border-black/[.08] dark:border-white/[.145]">
+        {bannerUrl && (
+          <div className="h-40 w-full overflow-hidden border-b border-black/[.08] dark:border-white/[.145]">
+            {isVideoUrl(bannerUrl) ? (
+              // eslint-disable-next-line jsx-a11y/media-has-caption
+              <video
+                src={bannerUrl}
+                autoPlay
+                muted
+                loop
+                playsInline
+                className="h-full w-full object-cover"
+              />
+            ) : (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={bannerUrl}
+                alt=""
+                className="h-full w-full object-cover"
+              />
+            )}
+          </div>
+        )}
+        <div className="p-6">
         <div className="flex items-start gap-5">
           {avatarUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
               src={avatarUrl}
               alt={`Foto de ${profileData.username}`}
-              className="h-20 w-20 rounded-full object-cover ring-2 ring-black/[.08] dark:ring-white/[.145]"
+              className="avatar-hover h-20 w-20 rounded-full object-cover ring-2 ring-black/[.08] dark:ring-white/[.145]"
             />
           ) : (
             <div
@@ -62,6 +106,14 @@ export default async function ProfilePage() {
           <div className="min-w-0 flex-1">
             <h1 className="truncate text-2xl font-semibold tracking-tight">
               {profileData.username}
+              {currentUser.role === "ADMIN" && (
+                <span
+                  title="Administrador do site"
+                  className="ml-2 inline-flex items-center gap-1 rounded-full bg-accent px-2.5 py-0.5 align-middle text-xs font-bold text-white"
+                >
+                  👑 AMN
+                </span>
+              )}
             </h1>
             <p className="truncate text-sm text-zinc-500 dark:text-zinc-400">
               {profileData.email}
@@ -91,6 +143,7 @@ export default async function ProfilePage() {
             Sem biografia.
           </p>
         )}
+        </div>
       </div>
 
       <div className="mt-5 rounded-2xl border border-black/[.08] p-6 dark:border-white/[.145]">
@@ -138,6 +191,44 @@ export default async function ProfilePage() {
           </dd>
         </div>
       </div>
+
+      {ranking.length > 0 && (
+        <div className="mt-5 rounded-2xl border border-black/[.08] p-6 dark:border-white/[.145]">
+          <h2 className="mb-4 text-sm font-semibold uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
+            🏆 Categorias mais escolhidas do grupo
+          </h2>
+          <ol className="flex flex-col gap-2">
+            {ranking.map(([value, count], index) => (
+              <li
+                key={value}
+                className="flex items-center justify-between rounded-xl border border-black/[.08] px-4 py-2.5 text-sm dark:border-white/[.145]"
+              >
+                <span className="flex items-center gap-2 font-medium">
+                  <span className="w-5 text-center">
+                    {index === 0 ? "🥇" : index === 1 ? "🥈" : index === 2 ? "🥉" : `${index + 1}º`}
+                  </span>
+                  {labelOf(FAVORITE_CATEGORIES, value)}
+                </span>
+                <span className="text-zinc-500 dark:text-zinc-400">
+                  {count} {count === 1 ? "pessoa" : "pessoas"}
+                </span>
+              </li>
+            ))}
+          </ol>
+        </div>
+      )}
+
+      {currentUser.role === "ADMIN" && (
+        <Link
+          href="/admin"
+          className="mt-5 flex items-center justify-between rounded-2xl border border-accent/40 bg-accent-soft p-4 text-sm font-medium transition-colors hover:bg-accent-soft/60 dark:border-accent/40"
+        >
+          <span>🛠️ Painel do administrador</span>
+          <span className="text-xs text-zinc-500 dark:text-zinc-400">
+            acesso por senha restrita
+          </span>
+        </Link>
+      )}
 
       <div className="mt-5 grid gap-3 sm:grid-cols-3">
         <Link

@@ -9,9 +9,13 @@ export default function RootLayout({
 }) {
   return (
     <main className="flex min-h-full flex-1 flex-col items-center justify-center px-6 py-12">
-      <h1 className="mb-8 text-2xl font-semibold tracking-tight">
-        {APP_NAME}
-      </h1>
+      <div className="mb-8 flex flex-col items-center gap-3">
+        <img src="/api/brand/logo" alt="" className="h-16 w-16 rounded-2xl" />
+        <h1 className="text-2xl font-semibold tracking-tight">
+          {APP_NAME}
+          <span className="text-accent">.</span>
+        </h1>
+      </div>
       {children}
     </main>
   );

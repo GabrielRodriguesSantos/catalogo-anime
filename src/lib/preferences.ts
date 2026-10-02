@@ -8,7 +8,7 @@ export type ThemePreference = (typeof THEME_OPTIONS)[number]["value"];
 
 export const ACCENT_OPTIONS = [
   { value: "zinc", label: "Zinco", hex: "#71717a" },
-  { value: "red", label: "Vermelho", hex: "#ef4444" },
+  { value: "red", label: "Vermelho", hex: "#e11d2e" },
   { value: "orange", label: "Laranja", hex: "#f97316" },
   { value: "amber", label: "Âmbar", hex: "#f59e0b" },
   { value: "green", label: "Verde", hex: "#22c55e" },
@@ -60,7 +60,7 @@ export type UserPreferences = {
 
 export const DEFAULT_PREFERENCES: UserPreferences = {
   theme: "system",
-  accent: "zinc",
+  accent: "red",
   favoriteCategories: [],
 };
 

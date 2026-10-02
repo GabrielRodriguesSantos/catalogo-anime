@@ -59,7 +59,7 @@ export function EmojiStudio({
           <button
             type="submit"
             disabled={generatePending}
-            className="rounded-2xl bg-foreground px-6 py-3 text-sm font-medium text-background disabled:opacity-50"
+            className="rounded-2xl bg-accent px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-accent-dark disabled:opacity-50"
           >
             {generatePending ? "Gerando…" : "Gerar emoji"}
           </button>
@@ -103,7 +103,7 @@ export function EmojiStudio({
               <button
                 type="submit"
                 disabled={savePending}
-                className="rounded-xl bg-foreground px-4 py-2 text-sm font-medium text-background disabled:opacity-50"
+                className="rounded-xl bg-accent px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-accent-dark disabled:opacity-50"
               >
                 Salvar emoji
               </button>

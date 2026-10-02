@@ -141,7 +141,7 @@ export default function RegisterForm() {
           <label htmlFor="accent" className={labelClass}>
             Cor de destaque
           </label>
-          <select id="accent" name="accent" defaultValue="zinc" className={inputClass}>
+          <select id="accent" name="accent" defaultValue="red" className={inputClass}>
             {ACCENT_OPTIONS.map((option) => (
               <option key={option.value} value={option.value}>
                 {option.label}
@@ -149,6 +149,22 @@ export default function RegisterForm() {
             ))}
           </select>
         </div>
+      </div>
+
+      <div className="mt-5 rounded-lg border border-black/[.08] p-3 dark:border-white/[.145]">
+        <label className="flex items-start gap-2 text-sm">
+          <input
+            type="checkbox"
+            name="adult"
+            value="yes"
+            required
+            className="mt-0.5 accent-current"
+          />
+          <span>
+            Confirmo que tenho <strong>18 anos ou mais</strong>. Conteúdo
+            restrito ao grupo de amigos.
+          </span>
+        </label>
       </div>
 
       <fieldset className="mt-5">
@@ -180,7 +196,7 @@ export default function RegisterForm() {
       <button
         type="submit"
         disabled={pending}
-        className="mt-6 h-11 w-full rounded-full bg-foreground px-5 text-sm font-medium text-background transition-opacity hover:opacity-90 disabled:opacity-60"
+        className="mt-6 h-11 w-full rounded-full bg-accent px-5 text-sm font-semibold text-white transition-colors hover:bg-accent-dark disabled:opacity-60"
       >
         {pending ? "Cadastrando…" : "Criar conta"}
       </button>

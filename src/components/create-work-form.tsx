@@ -219,7 +219,7 @@ export default function CreateWorkForm() {
       <button
         type="submit"
         disabled={pending}
-        className="mt-6 h-11 w-full rounded-full bg-foreground px-5 text-sm font-medium text-background transition-opacity hover:opacity-90 disabled:opacity-60"
+        className="mt-6 h-11 w-full rounded-full bg-accent px-5 text-sm font-semibold text-white transition-colors hover:bg-accent-dark disabled:opacity-60"
       >
         {pending ? "Salvando…" : "Salvar obra"}
       </button>

@@ -50,7 +50,7 @@ export default function LoginForm() {
       <button
         type="submit"
         disabled={pending}
-        className="mt-6 h-11 w-full rounded-full bg-foreground px-5 text-sm font-medium text-background transition-opacity hover:opacity-90 disabled:opacity-60"
+        className="mt-6 h-11 w-full rounded-full bg-accent px-5 text-sm font-semibold text-white transition-colors hover:bg-accent-dark disabled:opacity-60"
       >
         {pending ? "Entrando…" : "Entrar"}
       </button>
@@ -60,6 +60,12 @@ export default function LoginForm() {
         <Link href="/register" className="font-medium underline">
           Cadastrar
         </Link>
+      </p>
+
+      <p className="mt-5 text-center text-xs leading-relaxed text-zinc-500/80 dark:text-zinc-400/80">
+        Site privado, sem fins lucrativos, criado para um grupo de amigos. Este
+        projeto não hospeda obras, apenas lista onde assistir. Dúvidas ou
+        sugestões: gabriel.newia@gmail.com
       </p>
     </form>
   );

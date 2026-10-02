@@ -16,8 +16,12 @@ export default async function AppLayout({
   return (
     <div className="flex min-h-full flex-1 flex-col">
       <header className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 border-b border-black/[.08] px-4 py-3 sm:px-6 dark:border-white/[.145]">
-        <Link href="/" className="font-semibold tracking-tight">
-          {APP_NAME}
+        <Link href="/" className="flex items-center gap-2 font-semibold tracking-tight">
+          <img src="/api/brand/logo" alt="" className="h-8 w-8 rounded-xl" />
+          <span className="sm:text-lg">
+            {APP_NAME}
+            <span className="text-accent">.</span>
+          </span>
         </Link>
         <div className="order-3 w-full sm:order-none sm:w-auto sm:min-w-0 sm:flex-1 sm:justify-center sm:px-4">
           <form
@@ -35,34 +39,40 @@ export default async function AppLayout({
             <button
               type="submit"
               aria-label="Pesquisar"
-              className="shrink-0 text-sm"
+              className="shrink-0 text-sm text-accent"
             >
               🔎
             </button>
           </form>
         </div>
-        <nav className="order-2 flex flex-wrap items-center justify-center gap-2 text-sm sm:order-none sm:justify-end sm:gap-4">
+        <nav className="order-2 flex flex-wrap items-center justify-center gap-2 text-sm sm:order-none sm:justify-end sm:gap-3">
           <Link
             href="/obras"
-            className="rounded-full border border-black/[.08] px-3 py-1 sm:px-4 sm:py-1.5 dark:border-white/[.145]"
+            className="rounded-full border border-black/[.08] px-3 py-1 transition-colors hover:border-accent/60 hover:text-accent sm:px-4 sm:py-1.5 dark:border-white/[.145]"
           >
             Catálogo
           </Link>
           <Link
             href="/chat"
-            className="rounded-full border border-black/[.08] px-3 py-1 sm:px-4 sm:py-1.5 dark:border-white/[.145]"
+            className="rounded-full border border-black/[.08] px-3 py-1 transition-colors hover:border-accent/60 hover:text-accent sm:px-4 sm:py-1.5 dark:border-white/[.145]"
           >
             Conversas
           </Link>
           <Link
             href="/emojis"
-            className="rounded-full border border-black/[.08] px-3 py-1 sm:px-4 sm:py-1.5 dark:border-white/[.145]"
+            className="rounded-full border border-black/[.08] px-3 py-1 transition-colors hover:border-accent/60 hover:text-accent sm:px-4 sm:py-1.5 dark:border-white/[.145]"
           >
             Emojis
           </Link>
           <Link
+            href="/ajuda-ia"
+            className="rounded-full border border-black/[.08] px-3 py-1 transition-colors hover:border-accent/60 hover:text-accent sm:px-4 sm:py-1.5 dark:border-white/[.145]"
+          >
+            🤖 AjudaIA
+          </Link>
+          <Link
             href="/profile"
-            className="rounded-full border border-black/[.08] px-3 py-1 sm:px-4 sm:py-1.5 dark:border-white/[.145]"
+            className="rounded-full border border-black/[.08] px-3 py-1 transition-colors hover:border-accent/60 hover:text-accent sm:px-4 sm:py-1.5 dark:border-white/[.145]"
           >
             Perfil
           </Link>
@@ -70,7 +80,7 @@ export default async function AppLayout({
           {user.role === "ADMIN" && (
             <Link
               href="/admin/works"
-              className="rounded-full border border-black/[.08] px-3 py-1 sm:px-4 sm:py-1.5 dark:border-white/[.145]"
+              className="rounded-full bg-accent px-3 py-1 font-medium text-white transition-colors hover:bg-accent-dark sm:px-4 sm:py-1.5"
             >
               Cadastrar obra
             </Link>
@@ -81,7 +91,7 @@ export default async function AppLayout({
           <form action={logout}>
             <button
               type="submit"
-              className="rounded-full border border-black/[.08] px-3 py-1 sm:px-4 sm:py-1.5 dark:border-white/[.145]"
+              className="rounded-full border border-black/[.08] px-3 py-1 transition-colors hover:border-accent hover:text-accent sm:px-4 sm:py-1.5 dark:border-white/[.145]"
             >
               Sair
             </button>

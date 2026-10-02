@@ -56,7 +56,7 @@ export default function VideoSearch() {
           <button
             type="submit"
             disabled={pending}
-            className="h-11 rounded-full bg-foreground px-6 text-sm font-medium text-background transition-opacity hover:opacity-90 disabled:opacity-60"
+            className="h-11 rounded-full bg-accent px-6 text-sm font-semibold text-white transition-colors hover:bg-accent-dark disabled:opacity-60"
           >
             {pending ? "Procurando…" : "🔗 Pesquisar por link de vídeo"}
           </button>

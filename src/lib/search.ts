@@ -1,7 +1,7 @@
 import "server-only";
 
 import { prisma } from "@/lib/prisma";
-import { ADULT_RATING } from "@/lib/catalog-data";
+import { ADULT_RATING, dbGenreNamesFromPillValues } from "@/lib/catalog-data";
 import { splitTitles } from "@/lib/catalog-data";
 
 const STOPWORDS = new Set([
@@ -240,7 +240,10 @@ export async function searchCatalog(input: {
 }): Promise<{ results: RankedResult[]; total: number; hasMore: boolean }> {
   const rows = await getIndex();
   const queryTokens = tokenize(input.text ?? "");
-  const filters = input.filters ?? {};
+  const filters: DiscoveryFilters = {
+    ...(input.filters ?? {}),
+    genres: dbGenreNamesFromPillValues(input.filters?.genres ?? []),
+  };
   const skip = Math.max(0, Number(input.skip) || 0);
   const take = Math.min(Math.max(1, Number(input.take) || 20), 100);
   const minConfidence = Number(input.minConfidence) || 0.02;

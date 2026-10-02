@@ -13,11 +13,12 @@ import { isAdultRating, isAdultViewer } from "@/lib/content-gates";
 import { notifyUsersAboutNewWork } from "@/lib/notifications";
 import { requireAdmin, requireUser } from "@/lib/dal";
 import { prisma } from "@/lib/prisma";
-import { GENRES, type FavoriteCategoryValue } from "@/lib/preferences";
+import { GENRES } from "@/lib/preferences";
 import {
   WORK_AGE_RATINGS,
   WORK_LANGUAGE_OPTIONS,
   WORK_PLATFORM_OPTIONS,
+  dbGenreNamesFromPillValues,
 } from "@/lib/catalog-data";
 
 export type WorksPageInput = {
@@ -259,7 +260,7 @@ export async function createWork(
   if (platform && !WORK_PLATFORM_OPTIONS.includes(platform)) {
     return { error: "Selecione uma plataforma válida." };
   }
-  const finalGenres: FavoriteCategoryValue[] = genreValues as FavoriteCategoryValue[];
+  const finalGenres: string[] = dbGenreNamesFromPillValues(genreValues);
 
   let createdId: string | undefined;
 

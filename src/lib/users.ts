@@ -2,6 +2,7 @@ import "server-only";
 
 import { MAX_USERS } from "@/lib/config";
 import { prisma } from "@/lib/prisma";
+import { getSiteSetting } from "@/lib/site-settings";
 
 export const USERNAME_REGEX = /^[A-Za-z0-9_-]{3,24}$/;
 export const USERNAME_MIN_LENGTH = 3;
@@ -23,8 +24,14 @@ export async function isRegistrationOpen(): Promise<{
   activeUsers: number;
   maxUsers: number;
 }> {
-  const activeUsers = await countActiveUsers();
-  return { open: activeUsers < MAX_USERS, activeUsers, maxUsers: MAX_USERS };
+  const [activeUsers, maxUsers] = await Promise.all([
+    countActiveUsers(),
+    getSiteSetting("max_users").then((value) => {
+      const parsed = Number(value);
+      return Number.isInteger(parsed) && parsed >= 1 ? parsed : MAX_USERS;
+    }),
+  ]);
+  return { open: activeUsers < maxUsers, activeUsers, maxUsers };
 }
 
 export async function getOngoingUniqueConflict(username: string, email: string) {

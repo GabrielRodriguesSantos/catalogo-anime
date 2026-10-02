@@ -265,7 +265,7 @@ export function ChatHome({
             type="button"
             onClick={runGroup}
             disabled={pending || selectedIds.length === 0 || !groupName.trim()}
-            className="mt-4 w-full rounded-full bg-foreground py-2 text-sm font-medium text-background disabled:opacity-40"
+            className="mt-4 w-full rounded-full bg-accent py-2 text-sm font-semibold text-white transition-colors hover:bg-accent-dark disabled:opacity-40"
           >
             {pending ? "Criando…" : "Criar grupo"}
           </button>
@@ -363,7 +363,7 @@ function Avatar({ conversation }: { conversation: ClientConversation }) {
         <img
           src={avatarUrl}
           alt=""
-          className="h-full w-full rounded-full object-cover"
+          className="avatar-hover h-full w-full rounded-full object-cover"
         />
       ) : (
         label

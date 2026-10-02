@@ -19,6 +19,7 @@ import {
 } from "@/lib/preferences";
 import { readAvatarCandidate } from "@/lib/upload";
 import { MAX_BIO_LENGTH } from "@/lib/users";
+import { setThemeCookies } from "@/app/actions/gate";
 
 export type EditProfileState = {
   error?: string;
@@ -97,6 +98,7 @@ export async function updateProfile(
   const bio = String(formData.get("bio") ?? "").trim();
   const theme = String(formData.get("theme") ?? "").trim();
   const accent = String(formData.get("accent") ?? "").trim();
+  const banner = String(formData.get("banner") ?? "").trim();
   const removeAvatar = formData.get("removeAvatar") === "on";
   const favoriteCategories = sanitizeCategories(
     formData.getAll("category").map(String)
@@ -145,8 +147,16 @@ export async function updateProfile(
       data: {
         profile: {
           upsert: {
-            create: { bio: bio.length > 0 ? bio : null, avatarUrl },
-            update: { bio: bio.length > 0 ? bio : null, avatarUrl },
+            create: {
+              bio: bio.length > 0 ? bio : null,
+              avatarUrl,
+              bannerUrl: banner.length > 0 ? banner : null,
+            },
+            update: {
+              bio: bio.length > 0 ? bio : null,
+              avatarUrl,
+              bannerUrl: banner.length > 0 ? banner : null,
+            },
           },
         },
         settings: {
@@ -157,6 +167,11 @@ export async function updateProfile(
         },
       },
     });
+
+    await setThemeCookies(
+      preferences.theme,
+      preferences.accent
+    );
 
     await logAudit({
       userId: user.id,

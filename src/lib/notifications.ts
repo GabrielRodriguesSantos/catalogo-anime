@@ -3,6 +3,7 @@ import "server-only";
 import { prisma } from "@/lib/prisma";
 import { parsePreferences } from "@/lib/preferences";
 import { isAdultRating } from "@/lib/content-gates";
+import { dbGenreNamesFromPillValues } from "@/lib/catalog-data";
 
 export async function notifyUsersAboutNewWork(input: {
   workId: string;
@@ -26,30 +27,32 @@ export async function notifyUsersAboutNewWork(input: {
 
   if (allowed.length === 0) return { notified: 0, prioritized: 0 };
 
-  const rows = allowed.map((user) => {
-    const favorites = new Set(
-      parsePreferences(user.settings?.data).favoriteCategories
-    );
-    const prioritized = input.genreValues.some((genre) =>
-      (favorites as Set<string>).has(genre)
-    );
+  const rows = allowed
+    .map((user) => {
+      const favorites = new Set(
+        dbGenreNamesFromPillValues(
+          parsePreferences(user.settings?.data).favoriteCategories
+        )
+      );
+      const matches = input.genreValues.some((genre) => favorites.has(genre));
+      if (!matches) return null;
 
-    return {
-      userId: user.id,
-      type: "NEW_WORK",
-      title: `Nova obra: ${input.workTitle}`,
-      message: prioritized
-        ? "Uma obra nova foi adicionada em uma das suas categorias favoritas."
-        : "Uma obra nova foi adicionada ao catálogo.",
-      link: `/obras`,
-      priority: prioritized ? 1 : 0,
-    };
-  });
+      return {
+        userId: user.id,
+        type: "NEW_WORK",
+        title: `Nova obra: ${input.workTitle}`,
+        message:
+          "Uma obra nova foi adicionada em uma das suas categorias favoritas (★).",
+        link: `/obras`,
+        priority: 1,
+      };
+    })
+    .filter((row): row is NonNullable<typeof row> => row !== null);
 
   await prisma.notification.createMany({ data: rows });
 
   return {
     notified: rows.length,
-    prioritized: rows.filter((row) => row.priority === 1).length,
+    prioritized: rows.length,
   };
 }

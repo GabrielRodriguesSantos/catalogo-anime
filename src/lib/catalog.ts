@@ -5,6 +5,7 @@ import { isAdultRating, isAdultViewer } from "@/lib/content-gates";
 import { genreLabel } from "@/lib/preferences";
 import {
   ADULT_RATING,
+  dbGenreNamesFromPillValues,
   splitTitles,
   type WorkCardItem,
 } from "@/lib/catalog-data";
@@ -225,7 +226,7 @@ export async function findWorks(input: WorkSearchInput): Promise<{
   const type = (input.type ?? "").trim();
   const status = (input.status ?? "").trim();
   const ageRating = (input.ageRating ?? "").trim();
-  const genres = (input.genres ?? []).filter(Boolean);
+  const genres = dbGenreNamesFromPillValues(input.genres ?? []);
 
   const where: Record<string, unknown> = {};
 
@@ -254,7 +255,7 @@ export async function findUserLibrary(
   const q = (input.q ?? "").trim();
   const type = (input.type ?? "").trim();
   const section = (input.status ?? "").trim();
-  const genres = (input.genres ?? []).filter(Boolean);
+  const genres = dbGenreNamesFromPillValues(input.genres ?? []);
   const favoriteOnly = Boolean(input.favoriteOnly);
 
   const workWhere: Record<string, unknown> = {};

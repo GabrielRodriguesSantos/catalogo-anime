@@ -1,34 +1,27 @@
-import { NextResponse, type NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
-import { SESSION_COOKIE } from "@/lib/config";
-import { decrypt } from "@/lib/token";
+import { SITE_ACCESS_COOKIE } from "@/lib/config";
 
-const PUBLIC_PATHS = ["/login", "/register"];
+const PUBLIC_PREFIXES = ["/_next", "/entrar", "/api"];
 
-export async function proxy(request: NextRequest) {
+export function proxy(request: NextRequest) {
+  if (request.cookies.has(SITE_ACCESS_COOKIE)) {
+    return NextResponse.next();
+  }
+
   const { pathname } = request.nextUrl;
-
-  const session = await decrypt(request.cookies.get(SESSION_COOKIE)?.value);
-
-  const isPublic = PUBLIC_PATHS.some(
-    (path) => pathname === path || pathname.startsWith(`${path}/`)
+  const isPublic = PUBLIC_PREFIXES.some(
+    (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`)
   );
 
-  if (!session && !isPublic) {
-    const loginUrl = new URL("/login", request.url);
-    if (pathname !== "/") loginUrl.searchParams.set("next", pathname);
-    return NextResponse.redirect(loginUrl);
-  }
+  if (isPublic) return NextResponse.next();
 
-  if (session && isPublic) {
-    return NextResponse.redirect(new URL("/", request.url));
-  }
-
-  return NextResponse.next();
+  const url = request.nextUrl.clone();
+  url.pathname = "/entrar";
+  url.search = "";
+  return NextResponse.redirect(url);
 }
 
 export const config = {
-  matcher: [
-    "/((?!api|uploads|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)",
-  ],
+  matcher: ["/((?!_next/static|_next/image).*)"],
 };

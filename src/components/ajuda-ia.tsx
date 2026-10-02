@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useRef } from "react";
+import { useActionState, useEffect, useRef, useState } from "react";
 
 import { askAjuda } from "@/app/actions/search";
 import ScoredResultGrid from "@/components/scored-result-grid";
@@ -12,6 +12,15 @@ const labelClass = "text-sm font-medium";
 export default function AjudaIA() {
   const [state, formAction, pending] = useActionState(askAjuda, undefined);
   const formRef = useRef<HTMLFormElement>(null);
+  const [misses, setMisses] = useState(0);
+
+  useEffect(() => {
+    if (state?.needMore) {
+      setMisses((count) => count + 1);
+    } else if (state && !state.needMore) {
+      setMisses(0);
+    }
+  }, [state]);
 
   return (
     <div className="flex flex-col gap-6">
@@ -67,7 +76,7 @@ export default function AjudaIA() {
           <button
             type="submit"
             disabled={pending}
-            className="h-11 rounded-full bg-foreground px-6 text-sm font-medium text-background transition-opacity hover:opacity-90 disabled:opacity-60"
+            className="h-11 rounded-full bg-accent px-6 text-sm font-semibold text-white transition-colors hover:bg-accent-dark disabled:opacity-60"
           >
             {pending ? "Consultando…" : "🤖 Perguntar à AjudaIA"}
           </button>
@@ -125,11 +134,21 @@ export default function AjudaIA() {
       )}
 
       {state?.needMore && (
-        <p className="max-w-2xl rounded-2xl bg-zinc-100 p-4 text-sm text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300">
-          Ainda não encontrei uma correspondência sólida. Conte mais detalhes:
-          personagens, cenário, ano aproximado, canal/perfil do vídeo, idioma da
-          obra etc.
-        </p>
+        <div className="max-w-2xl rounded-2xl bg-zinc-100 p-4 text-sm text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300">
+          <p>
+            Ainda não encontrei uma correspondência sólida. Conte mais detalhes:
+            personagens, cenário, ano aproximado, canal/perfil do vídeo, idioma da
+            obra etc.
+          </p>
+          {misses >= 5 && (
+            <p className="mt-2 border-t border-zinc-200 pt-2 font-medium text-accent dark:border-zinc-700">
+              Já foram 5 tentativas sem resultado. Tente descrever a obra de
+              outra forma: cite o nome de um personagem inesquecível, uma cena
+              exata (ex.: "o protagonista ganha um soco no quinto episódio"),
+              o estilo do desenho ou a época em que você assistiu.
+            </p>
+          )}
+        </div>
       )}
 
       {state && state.results.length > 0 && (

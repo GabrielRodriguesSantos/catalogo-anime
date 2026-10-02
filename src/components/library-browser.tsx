@@ -122,7 +122,7 @@ export default function LibraryBrowser() {
               onClick={() => setSection(option.value)}
               className={`rounded-full border px-4 py-1.5 text-sm transition-colors ${
                 active
-                  ? "border-foreground bg-foreground text-background"
+                  ? "border-accent bg-accent text-white"
                   : "border-black/[.08] hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-white/[.06]"
               }`}
             >

@@ -206,3 +206,32 @@ export function confidenceHint(confidence: number): string {
   if (confidence >= 0.35) return "Baixa";
   return "Muito baixa";
 }
+
+const GENRE_PILL_TO_DB: Record<string, string[]> = {
+  horror: ["Horror"],
+  romance: ["Romance"],
+  acao: ["Action"],
+  fantasia: ["Fantasy"],
+  comedia: ["Comedy"],
+  drama: ["Drama"],
+  aventura: ["Adventure"],
+  misterio: ["Mystery"],
+  suspense: ["Suspense", "Thriller"],
+  scifi: ["Sci-Fi", "Science Fiction"],
+  isekai: ["Isekai"],
+  escolar: ["School"],
+  esporte: ["Sports"],
+  historico: ["Historical"],
+  outros: [],
+};
+
+export function dbGenreNamesFromPillValues(values: string[]): string[] {
+  const names: string[] = [];
+  for (const value of values ?? []) {
+    const mapped = GENRE_PILL_TO_DB[value] ?? [];
+    for (const name of mapped) {
+      if (!names.includes(name)) names.push(name);
+    }
+  }
+  return names;
+}

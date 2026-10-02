@@ -30,6 +30,7 @@ import {
   type ThemePreference,
 } from "@/lib/preferences";
 import { readAvatarCandidate } from "@/lib/upload";
+import { setThemeCookies } from "@/app/actions/gate";
 
 export type LoginState = {
   error?: string;
@@ -115,6 +116,26 @@ export async function login(
     role: user.role,
   });
 
+  const settingsRow = await prisma.userSetting.findUnique({
+    where: { userId: user.id },
+    select: { data: true },
+  });
+  let storedTheme = "system";
+  let storedAccent = "red";
+  if (settingsRow?.data) {
+    try {
+      const parsed = JSON.parse(settingsRow.data) as {
+        theme?: string;
+        accent?: string;
+      };
+      storedTheme = isThemeValue(parsed.theme ?? "") ? parsed.theme! : "system";
+      storedAccent = isAccentValue(parsed.accent ?? "") ? parsed.accent! : "red";
+    } catch {
+      // keep defaults
+    }
+  }
+  await setThemeCookies(storedTheme, storedAccent);
+
   await prisma.user.update({
     where: { id: user.id },
     data: { lastLoginAt: new Date() },
@@ -151,6 +172,7 @@ export async function register(
   const favoriteCategories = sanitizeCategories(
     formData.getAll("category").map(String)
   );
+  const adultConfirmed = String(formData.get("adult") ?? "").trim() === "yes";
 
   if (!USERNAME_REGEX.test(username)) {
     return {
@@ -173,6 +195,12 @@ export async function register(
 
   if (password !== confirm) {
     return { error: "As senhas não coincidem." };
+  }
+
+  if (!adultConfirmed) {
+    return {
+      error: "É necessário confirmar que você tem 18 anos ou mais para criar uma conta.",
+    };
   }
 
   if (bio.length > MAX_BIO_LENGTH) {
@@ -227,7 +255,12 @@ export async function register(
           email,
           passwordHash: await hashPassword(password),
           profile: {
-            create: { bio: bio.length > 0 ? bio : null, avatarUrl },
+            create: {
+              bio: bio.length > 0 ? bio : null,
+              avatarUrl,
+              adultVerified: true,
+              adultVerifiedAt: new Date(),
+            },
           },
           settings: {
             create: { data: serializePreferences(preferences) },
@@ -288,6 +321,8 @@ export async function register(
     username: user.username,
     role: user.role,
   });
+
+  await setThemeCookies(theme, accent);
 
   redirect("/");
 }

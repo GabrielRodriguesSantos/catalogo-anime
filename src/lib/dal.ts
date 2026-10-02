@@ -36,7 +36,7 @@ export const getProfileData = cache(async (userId: string) => {
       role: true,
       createdAt: true,
       profile: {
-        select: { avatarUrl: true, bio: true, adultVerified: true },
+        select: { avatarUrl: true, bio: true, bannerUrl: true, adultVerified: true },
       },
       settings: {
         select: { data: true },

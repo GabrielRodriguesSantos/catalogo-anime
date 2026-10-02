@@ -387,7 +387,7 @@ export function Composer({
           onClick={() => void handleSend()}
           disabled={!canSend}
           aria-label="Enviar mensagem"
-          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-foreground text-sm text-background disabled:opacity-40"
+          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-accent text-sm text-white transition-colors hover:bg-accent-dark disabled:opacity-40"
         >
           {pending ? "…" : "➤"}
         </button>
